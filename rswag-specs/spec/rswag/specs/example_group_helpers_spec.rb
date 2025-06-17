@@ -84,6 +84,18 @@ module Rswag
               [name: :blog, in: :body, schema: { type: 'object' }]
             )
           end
+
+          it "should dedupe parameters" do
+            subject.parameter(name: :duped, in: :body, schema: { type: 'object' })
+            subject.parameter(name: :duped, in: :body, schema: { type: 'object' })
+
+            expect(api_metadata[:path_item][:parameters]).to match(
+              [
+                {name: :blog, in: :body, schema: { type: 'object' }},
+                {name: :duped, in: :body, schema: { type: 'object' }},
+              ]
+            )
+          end
         end
 
         describe "#custom_property(attributes)" do

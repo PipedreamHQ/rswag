@@ -52,10 +52,10 @@ module Rswag
 
         if metadata.key?(:operation)
           metadata[:operation][:parameters] ||= []
-          metadata[:operation][:parameters] << attributes
+          metadata[:operation][:parameters] |= [attributes]
         else
           metadata[:path_item][:parameters] ||= []
-          metadata[:path_item][:parameters] << attributes
+          metadata[:path_item][:parameters] |= [attributes]
         end
       end
 
