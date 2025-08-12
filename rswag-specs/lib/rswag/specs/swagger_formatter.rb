@@ -118,6 +118,9 @@ module Rswag
         response_code = metadata[:response][:code]
         response = metadata[:response].reject { |k, _v| k == :code }
 
+        # Clear operation parameters that are marked as "ignore"
+        metadata[:operation][:parameters]&.reject! { |p| p[:ignore] }
+
         verb = metadata[:operation][:verb]
         operation = metadata[:operation]
           .reject { |k, _v| k == :verb }
