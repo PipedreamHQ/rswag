@@ -95,14 +95,16 @@ module Rswag
         end
       end
 
-      def example(mime, name, value, summary = nil, description = nil)
-        # Todo - move initialization of metadata somewhere else.
-        metadata[:response][:content] = {} if metadata[:response][:content].blank?
-
-        if metadata[:response][:content][mime].blank?
-          metadata[:response][:content][mime] = {}
-          metadata[:response][:content][mime][:examples] = {}
+      def init_content(mime)
+        metadata[:response][:content] ||= {}
+        metadata[:response][:content][mime] ||= {}
+        %i[encoding examples schema].each do |key|
+          metadata[:response][:content][mime][key] ||= {}
         end
+      end
+
+      def example(mime, name, value, summary = nil, description = nil)
+        init_content(mime)
 
         example_object = {
           value: value,
@@ -113,6 +115,17 @@ module Rswag
         metadata[:response][:content][mime][:examples].merge!(
           { name.to_sym => example_object }
         )
+      end
+
+      def content(mime, schema: nil, extras: {})
+        init_content(mime)
+        metadata[:response][:content][mime][:schema] = schema
+
+        return unless extras.is_a?(Hash)
+
+        extras.each do |key, value|
+          metadata[:response][:content][mime][key] = value
+        end
       end
 
       #
